@@ -1,6 +1,6 @@
 # API
 
-The API is a RESTful API that takes HTTP calls.
+The API is a RESTful API that takes HTTP calls and will respond with JSON.
 
 ## Emails
 

@@ -2,3 +2,4 @@
 /vendor/
 coverage.xml
 composer.lock
+/.phpunit.result.cache

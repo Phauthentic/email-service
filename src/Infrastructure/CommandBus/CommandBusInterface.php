@@ -16,6 +16,9 @@ namespace App\Infrastructure\CommandBus;
 
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Command Bus Interface
+ */
 interface CommandBusInterface
 {
     public function handle($command): void;

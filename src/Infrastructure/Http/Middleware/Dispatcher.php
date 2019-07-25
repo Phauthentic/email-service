@@ -12,12 +12,10 @@ declare(strict_types=1);
  * @link          https://github.com/Phauthentic
  * @license       https://opensource.org/licenses/GPL-3.0 GPL3 License
  */
-namespace App\Application\Http\Middleware;
+namespace App\Infrastructure\Http\Middleware;
 
 use App\Application\Http\ApiStatus;
-use App\Application\Http\RequestHandler\Mailers\Listing;
-use App\Application\Http\RequestHandler\Email\Send;
-use Psr\Cache\CacheItemPoolInterface;
+use App\Infrastructure\Http\Router;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -49,6 +47,11 @@ class Dispatcher implements MiddlewareInterface
     protected $responseFactory;
 
     /**
+     * @var \App\Infrastructure\Http\Router
+     */
+    protected $router;
+
+    /**
      * Constructor
      *
      * @param \Psr\Container\ContainerInterface $container Container
@@ -58,11 +61,13 @@ class Dispatcher implements MiddlewareInterface
     public function __construct(
         ContainerInterface $container,
         ResponseFactoryInterface $responseFactory,
-        StreamFactoryInterface $streamFactory
+        StreamFactoryInterface $streamFactory,
+        Router $router
     ) {
         $this->container = $container;
         $this->responseFactory = $responseFactory;
         $this->streamFactory = $streamFactory;
+        $this->router = $router;
     }
 
     /**
@@ -74,57 +79,48 @@ class Dispatcher implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $map = [
-            '/emails$/' => Send::class,
-            '/mailers$/' => Listing::class,
-            '/templates$/' => Send::class
-        ];
+        $handlerClass = $this->router->routeRequest($request);
 
-        foreach ($map as $pattern => $class) {
-            $path = $request->getUri()->getPath();
-            $method = $request->getMethod();
-
-            if (preg_match($pattern, $path)) {
-                if (!$this->container->has($class)) {
-                    continue;
-                }
-
-                $requestHandler = $this->container->get($class);
-
-                try {
-                    $result = $requestHandler($request);
-                } catch (Throwable $e) {
-                    $stream = $this->streamFactory->createStream(
-                        json_encode(
-                            [
-                                'status' => ApiStatus::ERROR,
-                                'message' => $e->getMessage(),
-                                'code' => $e->getCode(),
-                                'trace' => $e->getTrace()
-                            ]
-                        )
-                    );
-
-                    return $this->responseFactory
-                        ->createResponse(500)
-                        ->withHeader('Content-Type', 'application/json')
-                        ->withBody($stream);
-                }
-
-                if ($result instanceof ResponseFactoryInterface) {
-                    return $result;
-                }
-
-                $result = json_encode($result);
-                $stream = $this->streamFactory->createStream($result);
-
-                return $this->responseFactory
-                    ->createResponse(200)
-                    ->withHeader('Content-Type', 'application/json')
-                    ->withBody($stream);
-            }
+        if ($handlerClass === null) {
+            return $handler->handle($request);
         }
 
-        return $handler->handle($request);
+        if (!$this->container->has($handlerClass)) {
+            return $handler->handle($request);
+        }
+
+        $requestHandler = $this->container->get($handlerClass);
+
+        try {
+            $result = $requestHandler($request);
+        } catch (Throwable $e) {
+            $stream = $this->streamFactory->createStream(
+                json_encode(
+                    [
+                        'status' => ApiStatus::ERROR,
+                        'message' => $e->getMessage(),
+                        'code' => $e->getCode(),
+                        'trace' => $e->getTrace()
+                    ]
+                )
+            );
+
+            return $this->responseFactory
+                ->createResponse(500)
+                ->withHeader('Content-Type', 'application/json')
+                ->withBody($stream);
+        }
+
+        if ($result instanceof ResponseFactoryInterface) {
+            return $result;
+        }
+
+        $result = json_encode($result);
+        $stream = $this->streamFactory->createStream($result);
+
+        return $this->responseFactory
+            ->createResponse(200)
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody($stream);
     }
 }

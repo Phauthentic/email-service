@@ -10,6 +10,12 @@ It is especially useful in an environment with multiple applications where sendi
 
 See the [docs](/docs) folder of this project.
 
+## Support
+
+Please report issues on [https://github.com/Phauthentic/email-service/issues](https://github.com/Phauthentic/email-service/issues)
+
+Keep in mind that this is an open project and support is provided free and voluntarily.
+
 ## License
 
 Copyright Florian Krämer / Phauthentic
