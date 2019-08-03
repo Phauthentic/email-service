@@ -111,7 +111,7 @@ class Dispatcher implements MiddlewareInterface
                 ->withBody($stream);
         }
 
-        if ($result instanceof ResponseFactoryInterface) {
+        if ($result instanceof ResponseInterface) {
             return $result;
         }
 

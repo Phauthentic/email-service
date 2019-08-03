@@ -20,4 +20,19 @@ Returns a list of mailer profiles that can be used.
  * **array** cc
  * **array** attachments
  * **array** headers
- * **options** options
+ * **array** options
+
+```php
+[
+    'sender' => [
+        'Developer' => 'developer@code.com'
+    ],
+    'receiver' => [
+        ['Foo' => 'foo@bar.com'],
+        ['Bar' => 'boo@bar.com'],
+    ],
+    'subject' => 'test email',
+    'htmlContent' => 'HTML Content',
+    'textContent' => 'Text content'
+]
+```

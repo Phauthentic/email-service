@@ -14,9 +14,6 @@ declare(strict_types=1);
  */
 namespace App\Model\Email\Command;
 
-use League\Tactician\CommandBus;
-use Psr\Http\Message\ServerRequestInterface;
-
 /**
  * Send Email Command
  */

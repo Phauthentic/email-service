@@ -16,8 +16,6 @@ namespace App\Application\Http\RequestHandler\Email;
 
 use App\Model\Email\Command\SendEmail;
 use League\Tactician\CommandBus;
-use Phauthentic\Email\Email;
-use Phauthentic\Email\Mailer\SwiftMailer;
 use Phauthentic\Email\Priority;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -33,11 +31,9 @@ class Send
      * @param \Phauthentic\Email\Mailer\SwiftMailer $mailer Mailer
      */
     public function __construct(
-        CommandBus $commandBus,
-        SwiftMailer $mailer
+        CommandBus $commandBus
     ) {
         $this->bus = $commandBus;
-        $this->mailer = $mailer;
     }
 
     /**
