@@ -20,6 +20,7 @@ use Phauthentic\Email\Email;
 use Phauthentic\Email\EmailAddress;
 use Phauthentic\Email\EmailAddressCollection;
 use Phauthentic\Email\EmailAddressCollectionInterface;
+use Phauthentic\Email\HeaderCollection;
 use Phauthentic\Email\Mailer\MailerRegistry;
 
 /**
@@ -39,39 +40,20 @@ class SendEmailHandler
             $sender = EmailAddress::create($sender);
         }
 
-        $receiver = $this->emailAddressListFromArray($command->receiver());
-        $bcc = $this->emailAddressListFromArray($command->bcc());
-        $cc = $this->emailAddressListFromArray($command->cc());
-
         $email = Email::create(
             $sender,
-            $receiver,
-            $cc,
-            $bcc,
+            EmailAddressCollection::fromArray($command->receiver()),
+            EmailAddressCollection::fromArray($command->cc()),
+            EmailAddressCollection::fromArray($command->bcc()),
             $command->subject(),
             $command->htmlContent(),
-            $command->textContent()
+            $command->textContent(),
+            $command->priority(),
+            HeaderCollection::fromArray($command->headers()),
+            $command->options()
         );
 
         $mailer = MailerRegistry::get($command->mailer());
         $mailer->send($email);
-    }
-
-    /**
-     * @return EmailAddressCollection
-     */
-    protected function emailAddressListFromArray(array $emailAddresses): EmailAddressCollectionInterface
-    {
-        $collection = new EmailAddressCollection();
-        foreach ($emailAddresses as $address) {
-            if (is_array($address)) {
-                $emailAddress = EmailAddress::fromArray($address);
-            } else {
-                $emailAddress = EmailAddress::create($address);
-            }
-            $collection->add($emailAddress);
-        }
-
-        return $collection;
     }
 }

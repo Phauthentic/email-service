@@ -7,6 +7,7 @@ Setting a new client script up:
 ```sh
 mkdir mail-client
 cd mail-client
+composer init
 composer require guzzlehttp/guzzle
 touch send.php
 ```
@@ -22,8 +23,10 @@ require_once 'vendor/autoload.php';
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
-// Make sure you configure the right endpoint here!
-$client = new Client(['base_uri' => 'http://email-service.test']);
+$client = new Client([
+    // Make sure you configure the right endpoint here!
+    'base_uri' => 'http://email-service.test'
+]);
 
 try {
     $response = $client->request('POST', '/emails', [

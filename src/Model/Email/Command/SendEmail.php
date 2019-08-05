@@ -14,6 +14,8 @@ declare(strict_types=1);
  */
 namespace App\Model\Email\Command;
 
+use Phauthentic\Email\Priority;
+
 /**
  * Send Email Command
  */
@@ -26,11 +28,27 @@ class SendEmail
     protected $bcc = [];
     protected $htmlContent = null;
     protected $textContent = null;
-    protected $mailer;
+    protected $mailer = 'default';
+    protected $headers = [];
+    protected $options = [];
+    protected $priority = Priority::NORMAL;
+    protected $attachments = [];
 
     /**
      * Creates a new send email command
      *
+     * @param string $mailer Mailer config
+     * @param string|array $sender Sender
+     * @param array Receiver(s)
+     * @param array $bcc BCC
+     * @param array $cc CC
+     * @param string $subject Subject
+     * @param string $htmlContent HTML
+     * @param string $textContent Text
+     * @param int $priority Priority
+     * @param array $attachments Attachments
+     * @param array $headers Headers
+     * @param array $options Options
      * @return $this
      */
     public static function create(
@@ -43,8 +61,9 @@ class SendEmail
         string $htmlContent,
         string $textContent,
         int $priority,
-        array $attachments,
-        array $headers
+        array $attachments = [],
+        array $headers = [],
+        array $options = []
     ) {
         $command = new self();
         $command->mailer = $mailer;
@@ -55,6 +74,10 @@ class SendEmail
         $command->cc = $cc;
         $command->htmlContent = $htmlContent;
         $command->textContent = $textContent;
+        $command->attachments = $attachments;
+        $command->headers = $headers;
+        $command->options = $options;
+        $command->priority = $priority;
 
         return $command;
     }
@@ -121,5 +144,29 @@ class SendEmail
     public function cc(): array
     {
         return $this->cc;
+    }
+
+    /**
+     * @return array
+     */
+    public function priority(): int
+    {
+        return $this->priority;
+    }
+
+    /**
+     * @return array
+     */
+    public function headers(): array
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @return array
+     */
+    public function options(): array
+    {
+        return $this->options;
     }
 }

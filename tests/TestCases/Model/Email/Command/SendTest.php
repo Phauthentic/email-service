@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace App\Test\TestCase\Model\Email\Command;
 
+use App\Model\Email\Command\SendEmail;
 use PHPUnit\Framework\TestCase;
 
 /**
