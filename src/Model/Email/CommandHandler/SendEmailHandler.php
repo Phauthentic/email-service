@@ -19,7 +19,6 @@ use League\Tactician\CommandBus;
 use Phauthentic\Email\Email;
 use Phauthentic\Email\EmailAddress;
 use Phauthentic\Email\EmailAddressCollection;
-use Phauthentic\Email\EmailAddressCollectionInterface;
 use Phauthentic\Email\HeaderCollection;
 use Phauthentic\Email\Mailer\MailerRegistry;
 

@@ -70,7 +70,7 @@ class Router
     }
 
     /**
-     * @param ServerRequestInterface $request Request
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request
      * @return null|string
      */
     public function routeRequest(ServerRequestInterface $request): ?string

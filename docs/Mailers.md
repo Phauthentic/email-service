@@ -46,3 +46,17 @@ It actually doesn't do anything, can be used for testing.
 ```php
 $mailer = new NullMailer();
 ```
+
+## Multi Mailer
+
+Use this to send an email to multiple mailer instances. For example you could use any real mailer and the log mailer as well.
+
+It won't stop if a mailers failed and continue with the next on in the list. This allows you also to configure multiple mailers as a fallback. send() will only return false if all mailers failed.
+
+```php
+$mailer = new MultiMailer([
+    $logMailer,
+    $swiftMailerInstanceOne,
+    $swiftMailerInstanceTwo
+]);
+```

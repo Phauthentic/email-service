@@ -1,6 +1,6 @@
 # Installation
 
-Clone the project and install dependencies via [Composer](https://getcomposer.org/).
+Clone the project via [git](https://git-scm.com/) and install dependencies via [Composer](https://getcomposer.org/).
 
 ```sh
 git clone git@github.com:Phauthentic/email-service.git
