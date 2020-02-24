@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 /**
  * Copyright (c) Florian Krämer (https://florian-kraemer.net)
  * Licensed under The GPL3 License
@@ -11,6 +13,7 @@ declare(strict_types=1);
  * @link          https://github.com/Phauthentic
  * @license       https://opensource.org/licenses/GPL-3.0 GPL3 License
  */
+
 namespace App\Infrastructure\Http;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -34,7 +37,8 @@ class ApiResponse implements \JsonSerializable
         $self->status = $status;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize()
+    {
         return [
             'status' => $this->status,
             'data' => $this->data,

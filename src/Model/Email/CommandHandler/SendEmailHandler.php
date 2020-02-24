@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 /**
  * Copyright (c) Florian Krämer (https://florian-kraemer.net)
  *
@@ -12,6 +14,7 @@ declare(strict_types=1);
  * @link          https://github.com/Phauthentic
  * @license       https://opensource.org/licenses/GPL-3.0 GPL3 License
  */
+
 namespace App\Model\Email\CommandHandler;
 
 use App\Model\Email\Command\SendEmail;
@@ -45,8 +48,8 @@ class SendEmailHandler
             EmailAddressCollection::fromArray($command->cc()),
             EmailAddressCollection::fromArray($command->bcc()),
             $command->subject(),
-            $command->htmlContent(),
             $command->textContent(),
+            $command->htmlContent(),
             $command->priority(),
             HeaderCollection::fromArray($command->headers()),
             $command->options()

@@ -20,8 +20,8 @@ try {
                 ['Bar' => 'boo@bar.com'],
             ],
             'subject' => 'test email',
-            'htmlContent' => 'HTML Content',
-            'textContent' => 'Text content'
+            'htmlContent' => '<h1>HTML</h1><p>Content</p>',
+            'textContent' => 'Text Content'
         ]
     ]);
 

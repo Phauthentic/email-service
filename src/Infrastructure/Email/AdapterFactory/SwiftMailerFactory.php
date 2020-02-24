@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 /**
  * Copyright (c) Florian Krämer (https://florian-kraemer.net)
  *
@@ -12,6 +14,7 @@ declare(strict_types=1);
  * @link          https://github.com/Phauthentic
  * @license       https://opensource.org/licenses/GPL-3.0 GPL3 License
  */
+
 namespace App\Infrastructure\Email\AdapterFactory;
 
 use Phauthentic\Email\Mailer\MailerInterface;
@@ -22,7 +25,8 @@ use Swift_SmtpTransport;
 /**
  * Swift Mailer Factory
  */
-class SwiftMailerFactory {
+class SwiftMailerFactory
+{
 
     /**
      * @var array
