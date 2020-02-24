@@ -23,9 +23,7 @@
     "tuupola/http-factory": "^1.0"
   },
   "require-dev": {
-    "guzzlehttp/guzzle": "^6.3",
-    "phpunit/phpunit": "^8.2",
-    "squizlabs/php_codesniffer": "^3.4"
+    "guzzlehttp/guzzle": "^6.3"
   },
   "autoload": {
     "psr-4": {
@@ -46,6 +44,24 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "config": {
+    "bin-dir": "bin",
     "sort-packages": true
+  },
+  "scripts": {
+    "tests": [
+      ".\\bin\\phpunit"
+    ],
+    "cscheck": [
+      ".\\bin\\phpcs .\\src .\\tests --standard=.\\phpcs.xml -s"
+    ],
+    "csfix": [
+      ".\\bin\\phpcbf .\\src .\\tests --standard=.\\phpcs.xml"
+    ],
+    "analyze": [
+      ".\\bin\\phpstan analyse -l 5 -c phpstan.neon .\\src\\"
+    ],
+    "serve": [
+      "php -S localhost:8081 -t .\\public"
+    ]
   }
 }
