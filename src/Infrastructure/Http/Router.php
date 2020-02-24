@@ -48,7 +48,7 @@ class Router
      * @param string $handlerClass Handler Class
      * @return $this
      */
-    public function add(string $method, $pattern, string $handlerClass): self
+    public function add(string $method, string $pattern, string $handlerClass): self
     {
         $this->routes[$method][$pattern] = $handlerClass;
 
@@ -71,9 +71,9 @@ class Router
 
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request Request
-     * @return null|string
+     * @return mixed
      */
-    public function routeRequest(ServerRequestInterface $request): ?string
+    public function routeRequest(ServerRequestInterface $request)
     {
         $map = $this->getMapForMethod($request->getMethod());
 

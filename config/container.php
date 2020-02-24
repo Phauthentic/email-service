@@ -29,23 +29,24 @@ $container->add(\Psr\Container\ContainerInterface::class, $container);
 $container->add(\App\Infrastructure\Http\Router::class, function () {
     return \App\Infrastructure\Http\Router::fromArray([
         'post' => [
-            '/emails$/' => \App\Application\Http\RequestHandler\Email\Send::class,
-            '/templates$/' => \App\Model\Template\CommandHandler\AddTemplate::class,
+            '/send$/' => \App\Application\Http\RequestHandler\Email\Send::class
         ],
-        'put' => [
-        ],
+        'put' => [],
         'get' => [
             '/mailers$/' => \App\Application\Http\RequestHandler\Mailers\Listing::class
         ],
-        'delete' => [
-        ]
+        'delete' => []
     ]);
+});
+$container->add(\Phauthentic\Infrastructure\Http\Middleware\CorrelationIDMiddleware::class, function() {
+   return new \Phauthentic\Infrastructure\Http\Middleware\CorrelationIDMiddleware(\Phauthentic\Infrastructure\Utils\CorrelationID::toString());
 });
 $container->add(\Psr\Http\Message\ResponseFactoryInterface::class, \Tuupola\Http\Factory\ResponseFactory::class);
 $container->add(\Psr\Http\Message\StreamFactoryInterface::class, \Tuupola\Http\Factory\StreamFactory::class);
 $container->add(\Psr\Http\Message\ServerRequestFactoryInterface::class, \App\Infrastructure\Http\ServerRequestFactory::class);
 $container->add(\App\Infrastructure\Http\ResponseEmitterInterface::class, \App\Infrastructure\Http\SapiStreamEmitter::class);
 $container->add(\Psr\Http\Server\RequestHandlerInterface::class, new \Moon\HttpMiddleware\Delegate([
+    \Phauthentic\Infrastructure\Http\Middleware\CorrelationIDMiddleware::class,
     \App\Infrastructure\Http\Middleware\Dispatcher::class,
     \App\Infrastructure\Http\Middleware\NotFoundMiddleware::class
 ], function() {}, $container));
@@ -53,23 +54,19 @@ $container->add(\Psr\Http\Server\RequestHandlerInterface::class, new \Moon\HttpM
 /*******************************************************************************
  * Mailer
  ******************************************************************************/
-$container->add(\Phauthentic\Email\Mailer\SwiftMailer::class, function() {
-    $transport = (new \Swift_SmtpTransport('localhost', 1025))
-      ->setUsername('')
-      ->setPassword('');
-
-    $swiftMailer = new Swift_Mailer($transport);
-
-    return new \Phauthentic\Email\Mailer\SwiftMailer($swiftMailer);
-});
-
 $container->add(\Phauthentic\Email\Mailer\MailerInterface::class, \Phauthentic\Email\Mailer\SwiftMailer::class);
 
 \Phauthentic\Email\Mailer\MailerRegistry::add(
     'default',
-    $container->get(\Phauthentic\Email\Mailer\SwiftMailer::class)
+    \App\Infrastructure\Email\AdapterFactory\SwiftMailerFactory::buildFromArray([
+        'username' => '',
+        'password' => '',
+        'port' => 1025,
+        'host' => 'localhost',
+        'encryption' => null,
+        'transportClass' => Swift_SmtpTransport::class
+    ])
 );
-
 /*******************************************************************************
  * Command Bus
  ******************************************************************************/

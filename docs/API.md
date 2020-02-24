@@ -8,7 +8,7 @@ The API is a RESTful API that takes HTTP calls and will respond with JSON.
 
 Returns a list of mailer profiles that can be used.
 
-### POST /email
+### POST /send
 
  * **string** mailer
  * **string** subject

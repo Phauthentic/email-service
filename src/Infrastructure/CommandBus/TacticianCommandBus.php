@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace App\Infrastructure\CommandBus;
 
+use League\Tactician\CommandBus;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -23,11 +24,7 @@ use Psr\Http\Message\ResponseInterface;
  * so this interface is used and can be implemented by a decorator around
  * an external command bus interface.
  */
-interface CommandBusInterface
+class TacticianCommandBus extends CommandBus implements CommandBusInterface
 {
-    /**
-     * @param object $command
-     * @return mixed
-     */
-    public function handle($command): void;
+
 }
