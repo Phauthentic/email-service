@@ -16,13 +16,16 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http;
 
+use InvalidArgumentException;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 /**
- * A primitive router, we don't need a full fledged router for this project
+ * A primitive router, fully regex based, no hand-holding :)
  *
  * All it does it matches a requests path via regex and the regex is mapped to
- * a handler class that is a string
+ * a handler
  */
 class Router
 {
@@ -30,6 +33,11 @@ class Router
      * @var array
      */
     protected $routes = [];
+
+    /**
+     * @var array
+     */
+    protected $httpVerbs = ['post', 'put', 'get', 'delete', 'patch'];
 
     /**
      * @param array $routes Map
@@ -48,12 +56,23 @@ class Router
      *
      * @param string $method HTTP Method
      * @param string $pattern Regex Pattern
-     * @param string $handlerClass Handler Class
+     * @param mixed $handler Handler
      * @return $this
      */
-    public function add(string $method, string $pattern, string $handlerClass): self
+    public function addRoute(string $method, string $pattern, $handler): self
     {
-        $this->routes[$method][$pattern] = $handlerClass;
+        $method = strtolower($method);
+        $this->checkHttpVerb($method);
+
+        if (isset($this->routes[$method][$pattern])) {
+            throw new RuntimeException(stprintf(
+                'Route %s for %s has already been defined',
+                $pattern,
+                $method
+            ));
+        }
+
+        $this->routes[$method][$pattern] = $handler;
 
         return $this;
     }
@@ -82,7 +101,6 @@ class Router
 
         foreach ($map as $pattern => $handler) {
             $path = $request->getUri()->getPath();
-            $method = $request->getMethod();
 
             if (preg_match($pattern, $path)) {
                 return $handler;
@@ -90,5 +108,19 @@ class Router
         }
 
         return null;
+    }
+
+    /**
+     * @param string $verb Verb
+     * @throws \InvalidArgumentException
+     * @return void
+     */
+    protected function checkHttpVerb($verb): void
+    {
+        if (!in_array($verb, $this->httpVerbs)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid HTTP verb %s provided', $verb
+            ));
+        }
     }
 }

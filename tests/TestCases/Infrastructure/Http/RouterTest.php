@@ -18,9 +18,11 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Infrastructure\Http;
 
 use App\Infrastructure\Http\Router;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Closure;
 
 /**
  * Router Test
@@ -38,6 +40,44 @@ class RouterTest extends TestCase
             ]
         ]);
 
+        $request = $this->buildMockRequest('/users', 'get');
+        $result = $router->routeRequest($request);
+        $this->assertEquals('UsersHandlerClass', $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testRoutes(): void
+    {
+        $router = Router::fromArray([
+            'get' => [
+                '/callback(\/)?$/' => function() {}
+            ]
+        ]);
+
+        $request = $this->buildMockRequest('/callback', 'get');
+        $result = $router->routeRequest($request);
+        $this->assertInstanceOf(Closure::class, $result);
+
+        $request = $this->buildMockRequest('/callback', 'get');
+        $result = $router->routeRequest($request);
+        $this->assertInstanceOf(Closure::class, $result);
+
+        $request = $this->buildMockRequest('/callback/', 'get');
+        $result = $router->routeRequest($request);
+        $this->assertInstanceOf(Closure::class, $result);
+
+        $request = $this->buildMockRequest('/callback/more', 'get');
+        $result = $router->routeRequest($request);
+        $this->assertNull($result);
+    }
+
+    /**
+     * @return MockObject
+     */
+    protected function buildMockRequest($path, $method): MockObject
+    {
         $uri = $this->getMockBuilder(UriInterface::class)
             ->getMock();
         $request = $this->getMockBuilder(ServerRequestInterface::class)
@@ -45,7 +85,7 @@ class RouterTest extends TestCase
 
         $request->expects($this->any())
             ->method('getMethod')
-            ->willReturn('get');
+            ->willReturn($method);
 
         $request->expects($this->any())
             ->method('getUri')
@@ -53,10 +93,8 @@ class RouterTest extends TestCase
 
         $uri->expects($this->any())
             ->method('getPath')
-            ->willReturn('/users');
+            ->willReturn($path);
 
-        $result = $router->routeRequest($request);
-
-        $this->assertEquals('UsersHandlerClass', $result);
+        return $request;
     }
 }
