@@ -23,7 +23,7 @@
     "tuupola/http-factory": "^1.0"
   },
   "require-dev": {
-    "guzzlehttp/guzzle": "^6.3"
+    "instituteweb/composer-scripts": "^1.1"
   },
   "autoload": {
     "psr-4": {
@@ -41,7 +41,7 @@
       "url": "git@github.com:phauthentic/email.git"
     }
   ],
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "prefer-stable": true,
   "config": {
     "bin-dir": "bin",
@@ -49,16 +49,23 @@
   },
   "scripts": {
     "tests": [
-      ".\\bin\\phpunit"
+      "\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
+      "./bin/phpunit"
     ],
     "cscheck": [
-      ".\\bin\\phpcs .\\src .\\tests --standard=.\\phpcs.xml -s"
+      "\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
+      "./bin/phpcs ./src ./tests --standard=./phpcs.xml -s"
     ],
     "csfix": [
-      ".\\bin\\phpcbf .\\src .\\tests --standard=.\\phpcs.xml"
+      "\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
+      "./bin/phpcbf ./src ./tests --standard=./phpcs.xml"
     ],
     "analyze": [
-      ".\\bin\\phpstan analyse -l 5 -c phpstan.neon .\\src\\"
+      "\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
+      "./bin/phpstan analyse -l 5 -c phpstan.neon ./src\\"
+    ],
+    "phive": [
+      "php ./config/composer_phive_script.php"
     ],
     "serve": [
       "php -S localhost:8081 -t .\\public"
